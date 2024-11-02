@@ -12,6 +12,7 @@ const HomePage = () => {
     const [file, setFile] = useState();
     const imageHolder = useRef();
     const [mapImageDimensions, setImageDimensions] = useState({ xcor: 0, ycor: 0 });
+    const [mapName,setMapName]=useState("");
 
     const handleSubmitForPath = async (e) => {
         e.preventDefault();
@@ -19,7 +20,7 @@ const HomePage = () => {
 
         const pathData = async () => {
             const dataToSend = [startPoint, endPoint];
-            const response = await fetch("http://localhost:8080/api/navigation/findpath", {
+            const response = await fetch(`http://localhost:8080/api/navigation/findpath/${mapName}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,6 +41,7 @@ const HomePage = () => {
 
     const handleFileUpload = (e) => {
         setFile(URL.createObjectURL(e.target.files[0]));
+        setMapName(e.target.files[0].name)
     };
 
     const handleGettingRect = () => {
