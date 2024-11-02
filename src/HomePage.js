@@ -41,7 +41,8 @@ const HomePage = () => {
 
     const handleFileUpload = (e) => {
         setFile(URL.createObjectURL(e.target.files[0]));
-        setMapName(e.target.files[0].name)
+        setMapName(e.target.files[0].name);
+        setPointsLoading(true);
     };
 
     const handleGettingRect = () => {
