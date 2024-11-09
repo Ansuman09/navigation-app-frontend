@@ -1,3 +1,5 @@
+import { faLocationArrow, faLocationCrosshairs, faLocationDot, faLocationPin, faLocationPinLock, faMapLocationDot, faPersonWalking } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useRef, useState } from "react";
 
 const HomePage = () => {
@@ -43,38 +45,43 @@ const HomePage = () => {
         setFile(URL.createObjectURL(e.target.files[0]));
         setMapName(e.target.files[0].name);
         setPointsLoading(true);
+
+        handleGettingRect();
     };
 
     const handleGettingRect = () => {
+        
         const rect = imageHolder.current.getBoundingClientRect();
         console.log("Image Position:", rect.left, rect.top); // Log image position
         setImageDimensions({ xcor: rect.left, ycor: rect.top });
     };
 
     const handleGettingCoordinates=(e)=>{
+        
+        e.preventDefault()
         if (!startPointIsSet){
-            setStartPoint({ ...startPoint, xcor: Number(e.clientX),ycor: Number(e.clientY)})
+            setStartPoint({ ...startPoint, xcor: Number(e.clientX)-mapImageDimensions.xcor,ycor: Number(e.clientY)-mapImageDimensions.ycor})
             
         }else{
-            setEndPoint({...endPoint,xcor:Number(e.clientX),ycor:Number(e.clientY)})
+            setEndPoint({...endPoint,xcor:Number(e.clientX)-mapImageDimensions.xcor,ycor:Number(e.clientY)-mapImageDimensions.ycor})
         }
     };
 
 
     return (
-        <div style={{ position: "relative" }}>
+        <div className="home-page-container">
             {/* <div className="my-header">
                 <h3>Upload map</h3>
             </div> */}
             <img className={"mapimage"} src={file} alt="map here" ref={imageHolder} onClick={(e)=>handleGettingCoordinates(e)}/>
             <input type="file" onChange={handleFileUpload} />
             
-            <form onSubmit={handleSubmitForPath}>
-                <p>Start :: {startPoint.xcor},{startPoint.ycor}</p> 
+            <form onSubmit={handleSubmitForPath} className="cordinate-set-form">
+                <p>{startPointIsSet===true ? <FontAwesomeIcon icon={faLocationPinLock}/>:<FontAwesomeIcon icon={faLocationDot}/>} Start :: {startPoint.xcor},{startPoint.ycor}</p> 
                 {startPointIsSet===false ? <button type="button" onClick={()=>setStartPointIsSet(true)} className="cordinates-change"> Confirm Start </button>: 
                 <button type="button" className="cordinates-confirmed" onClick={()=>setStartPointIsSet(false)}> Change start </button>}
-                <p>End :: {endPoint.xcor},{endPoint.ycor}</p>
-                <button type="submit">Submit</button>
+                <p><FontAwesomeIcon icon={faMapLocationDot}/> End :: {endPoint.xcor},{endPoint.ycor}</p>
+                <button type="submit" className="submit-btn" ><FontAwesomeIcon icon={faPersonWalking}/> Go</button>
             </form>
 
             {!pointsLoading && points.map(point => {
