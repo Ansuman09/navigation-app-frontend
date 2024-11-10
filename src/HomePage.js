@@ -74,7 +74,7 @@ const HomePage = () => {
                 <h3>Upload map</h3>
             </div> */}
             <img className={"mapimage"} src={file} alt="map here" ref={imageHolder} onClick={(e)=>handleGettingCoordinates(e)}/>
-            <input type="file" onChange={handleFileUpload} />
+            <input className="image-upload-btn" type="file" onChange={handleFileUpload} />
             
             <form onSubmit={handleSubmitForPath} className="cordinate-set-form">
                 <p>{startPointIsSet===true ? <FontAwesomeIcon icon={faLocationPinLock}/>:<FontAwesomeIcon icon={faLocationDot}/>} Start :: {startPoint.xcor},{startPoint.ycor}</p> 
@@ -83,6 +83,17 @@ const HomePage = () => {
                 <p><FontAwesomeIcon icon={faMapLocationDot}/> End :: {endPoint.xcor},{endPoint.ycor}</p>
                 <button type="submit" className="submit-btn" ><FontAwesomeIcon icon={faPersonWalking}/> Go</button>
             </form>
+
+            <div className="description-container">
+            <p>This is a navigation app.</p>
+
+            <p>The directions are mapped using A* search algorithm.</p> 
+            
+            Please use maps with path drawn as lines for best results. The navigation app is currntly almost 70% accurate. 
+            The path may come slightly padded. Also curently there are no means to detect longer curved lines yet. Have Fun!
+
+
+            </div>
 
             {!pointsLoading && points.map(point => {
                 
@@ -105,7 +116,10 @@ const HomePage = () => {
                     </p>
                 );
             })}
+            
+        
         </div>
+
     );
 };
 
