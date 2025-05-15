@@ -9,6 +9,8 @@ const HomePage = () => {
     const [startPointIsSet,setStartPointIsSet]=useState(false);
     const [startPoint, setStartPoint] = useState({ xcor: 0, ycor: 0 });
 
+    const react_url=process.env.REACT_APP_API_URL;
+
     const [endPointIsSet,setEndPointIsSet]=useState(false);
     const [endPoint, setEndPoint] = useState({ xcor: 0, ycor: 0 });
     const [file, setFile] = useState();
@@ -22,7 +24,7 @@ const HomePage = () => {
 
         const pathData = async () => {
             const dataToSend = [startPoint, endPoint];
-            const response = await fetch(`http://localhost:8080/api/navigation/findpath/${mapName}`, {
+            const response = await fetch(`${react_url}/api/navigation/findpath/${mapName}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,12 +43,42 @@ const HomePage = () => {
         pathData();
     };
 
-    const handleFileUpload = (e) => {
-        setFile(URL.createObjectURL(e.target.files[0]));
-        setMapName(e.target.files[0].name);
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+    
+        setFile(URL.createObjectURL(file));
+        setMapName(file.name);
         setPointsLoading(true);
-
+    
+        const formData = new FormData();
+        formData.append('image', file); // Assuming your backend expects 'file' as the field name
+    
+        try {
+            const res = await fetch(`${react_url}/api/navigation/upload`, {
+                method: "POST",
+                body: formData
+                // Don't set 'Content-Type' manually; let the browser set it
+            });
+    
+            if (res.ok) {
+                alert("Upload successful");
+            } else {
+                alert("Upload failed");
+                console.error("Upload failed with status:", res.status);
+            }
+        } catch (err) {
+            console.error("Error uploading file:", err);
+            alert("Upload failed");
+        }
+    
         handleGettingRect();
+    };
+    
+    
+
+    const uploadImage=async()=>{
+        
     };
 
     const handleGettingRect = () => {
@@ -94,7 +126,29 @@ const HomePage = () => {
 
 
             </div>
+            {startPoint.xcor!==0 && <p 
+                        style={{
+                            position: "absolute",
+                            margin: 0,
+                            left: startPoint.xcor+mapImageDimensions.xcor,
+                            top: startPoint.ycor+mapImageDimensions.ycor,
+                            color: "blue"
+                        }}
+                    >
+                        *
+                    </p>}
 
+            {endPoint.xcor!==0 && <p 
+                        style={{
+                            position: "absolute",
+                            margin: 0,
+                            left: endPoint.xcor+mapImageDimensions.xcor,
+                            top: endPoint.ycor+mapImageDimensions.ycor,
+                            color: "green"
+                        }}
+                    >
+                        *
+                    </p>}
             {!pointsLoading && points.map(point => {
                 
                 //logging point coodinates obtained
